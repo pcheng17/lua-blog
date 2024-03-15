@@ -2,8 +2,8 @@ local pc = require("pcheng")
 local sw = require("stopwatch")
 
 sw.start()
-local path = "./posts/" -- Specify the directory path
-local files, err = pc.list_markdown_files(path)
+local path = "./posts" -- Specify the directory path
+local files, err = pc.get_markdown_files(path)
 
 if not files then
     print("Error:", err)
@@ -13,12 +13,13 @@ else
     -- local markdown = readFile("posts/" .. file)
     -- local html = markdownToHtml(markdown)
     -- writeFile("public/" .. file:gsub("%.md$", ".html"), html)
-    print("✏️  Processed " .. file)
+    print("Processing " .. file)
   end
 end
 
 local dt = sw.elapsed_milliseconds()
-print("🚀 Successfully built the blog in " .. dt .. " ms - ready to deploy!")
+print("🚀 Built the blog in " .. dt .. " ms - ready to deploy!")
+
 
 -- Function to read a file
 -- local function readFile(path)
