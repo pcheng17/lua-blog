@@ -1,20 +1,28 @@
 local pc = require("pcheng")
+local sw = require("stopwatch")
 
+sw.start()
 local path = "./posts/" -- Specify the directory path
 local files, err = pc.list_markdown_files(path)
+
 if not files then
     print("Error:", err)
 else
-    for i, filename in ipairs(files) do
-        print("✏️  "  .. filename)
-    end
+  -- Process each Markdown file in the posts directory
+  for _, file in ipairs(files) do
+    -- local markdown = readFile("posts/" .. file)
+    -- local html = markdownToHtml(markdown)
+    -- writeFile("public/" .. file:gsub("%.md$", ".html"), html)
+    print("✏️  Processed " .. file)
+  end
 end
 
-print("🚀 Successfully built the blog - ready to deploy!")
+local dt = sw.elapsed_milliseconds()
+print("🚀 Successfully built the blog in " .. dt .. " ms - ready to deploy!")
 
 -- Function to read a file
 -- local function readFile(path)
---   local file = io.open(path, "rb")   -- rb: read in binary mode
+--   local file = io.open(path, "rb")
 --   if not file then return nil end
 --   local content = file:read("*all")
 --   file:close()
@@ -35,15 +43,4 @@ print("🚀 Successfully built the blog - ready to deploy!")
 --   return content
 -- end
 
--- Process each Markdown file in the posts directory
--- for file in lfs.dir("posts/") do
---   if file:match("^.+%.md$") then   -- If the file is a Markdown file
---     local markdown = readFile("posts/" .. file)
---     local html = markdownToHtml(markdown)
---     -- Here, you would apply your HTML template to 'html'
---     -- For simplicity, we'll skip template processing
---     -- and just write the HTML to a file
---     writeFile("public/" .. file:gsub("%.md$", ".html"), html)
---   end
--- end
 

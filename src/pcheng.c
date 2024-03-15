@@ -6,7 +6,8 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
-static void list_markdown_files_recursively(lua_State* L, const char* basepath, const char* path, int* index) {
+static void list_markdown_files_recursively(lua_State* L, const char* basepath, const char* path, int* index)
+{
     char fullpath[1024];
     if (path) {
         snprintf(fullpath, sizeof(fullpath), "%s/%s", basepath, path);
@@ -55,7 +56,8 @@ static void list_markdown_files_recursively(lua_State* L, const char* basepath, 
     closedir(d);
 }
 
-static int list_markdown_files(lua_State* L) {
+static int list_markdown_files(lua_State* L)
+{
     const char* path = luaL_checkstring(L, 1);
     lua_newtable(L);
     int index = 1;
@@ -68,7 +70,8 @@ static const struct luaL_Reg pcheng[] = {
     {NULL, NULL}
 };
 
-int luaopen_pcheng(lua_State* L) {
+int luaopen_pcheng(lua_State* L)
+{
     luaL_newlib(L, pcheng);
     return 1;
 }

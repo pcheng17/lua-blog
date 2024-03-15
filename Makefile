@@ -3,28 +3,30 @@ CFLAGS=-shared -fPIC -O3
 INCLUDES=-I/opt/homebrew/include/lua5.4
 LFLAGS=-L/opt/homebrew/lib
 LIBS=-llua5.4
-BUILD_DIR=build
 PUBLIC_DIR=public
 SRC_DIR=src
 
-SRC=$(SRC_DIR)/pcheng.c
-LIB=pcheng.so
+# Find all .c files in SRC_DIR
+SOURCES=$(wildcard $(SRC_DIR)/*.c)
+
+# Replace the .c extension with .so for all sources
+LUA_LIBS=$(SOURCES:$(SRC_DIR)/%.c=%.so)
 
 LUA_MAIN=main.lua
 
-.PHONY: all lib clean
+.PHONY: all libs clean
 
-all: lib
-	@mkdir -p $(BUILD_DIR)
+all: libs
+	@mkdir -p $(PUBLIC_DIR)
 	@lua $(LUA_MAIN)
 
-lib:
-	@mkdir -p $(BUILD_DIR)
-	@$(CC) $(CFLAGS) $(INCLUDES) $(LFLAGS) $(LIBS) $(SRC) -o $(LIB)
-	@echo ✅ Compiled $(LIB)
+libs: $(LUA_LIBS)
+
+%.so: $(SRC_DIR)/%.c
+	@$(CC) $(CFLAGS) $(INCLUDES) $(LFLAGS) $(LIBS) $< -o $@
+	@echo ✅ Compiled $@
 
 clean:
 	@$(RM) -r $(PUBLIC_DIR)
-	@$(RM) -r $(BUILD_DIR)
-	@$(RM) $(LIB)
+	@$(RM) $(LUA_LIBS)
 	@echo 🧼 Cleaned up!
