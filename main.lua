@@ -14,7 +14,6 @@ local function render_template(template_path, data)
 
   -- Replace component placeholders with rendered components
   content = content:gsub("{{@([%w_]+)@}}", function(component)
-    -- TODO What should I do about uppercase/lowercase?
     return render_component(component, data[component] or {})
   end)
 
