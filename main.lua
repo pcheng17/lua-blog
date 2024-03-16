@@ -1,6 +1,7 @@
 local pc = require("pcheng")
 local sw = require("stopwatch")
 local utils = require("utils")
+local config = require("config")
 
 local function render_component(name, data)
   local component = require("components." .. name)
@@ -12,9 +13,9 @@ local function render_template(template_path, data)
   if not content then return nil end
 
   -- Replace component placeholders with rendered components
-  content = content:gsub("{{%%(%w+)%%}}", function(componentName)
+  content = content:gsub("{{@([%w_]+)@}}", function(component)
     -- TODO What should I do about uppercase/lowercase?
-    return render_component(componentName, data[componentName] or {})
+    return render_component(component, data[component] or {})
   end)
 
   -- Replace data placeholders with values
@@ -47,15 +48,10 @@ end
 sw.start()
 
 local data = {
-  NavigationBar = {
-    links = {
-      { url = "/", text = "Home" },
-      { url = "/about", text = "About" },
-    }
-  },
   page_title = "Welcome to my blog!",
   content = "Hello, world!",
 }
+utils.merge_tables(data, config)
 
 local html_content = render_template("./templates/base.html", data)
 utils.write_file("public/index.html", html_content)
