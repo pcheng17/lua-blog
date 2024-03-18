@@ -1,9 +1,11 @@
+local nl = require("components.navigation_link")
+
 local M = {}
 
 function M.render(data)
   local linksHTML = ""
   for _, link in ipairs(data.links) do
-    linksHTML = linksHTML .. string.format("<a href='%s'>%s</a>", link.url, link.text)
+    linksHTML = linksHTML .. nl.render(link)
   end
   return string.format(
     [[<nav>

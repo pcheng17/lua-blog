@@ -48,7 +48,7 @@ sw.start()
 
 local data = {
   page_title = "Welcome to my blog!",
-  content = "Hello, world!",
+  content = "Hi, mom!",
 }
 utils.merge_tables(data, config)
 
