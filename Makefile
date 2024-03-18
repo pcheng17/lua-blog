@@ -18,6 +18,8 @@ LUA_MAIN=main.lua
 
 all: libs
 	@mkdir -p $(PUBLIC_DIR)
+	@mkdir -p $(PUBLIC_DIR)/static
+	@cp static/styles.css $(PUBLIC_DIR)/static/styles.css
 	@lua $(LUA_MAIN)
 
 libs: $(LUA_LIBS)

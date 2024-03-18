@@ -32,28 +32,24 @@ end
 local path = "./content" -- Specify the directory path
 local files, err = pc.get_markdown_files(path)
 
-if not files then
-    print("Error:", err)
-else
-  for _, file in ipairs(files) do
-    print("Processing " .. file)
-    -- Something like the following:
-    -- local markdown = utils.read_file("posts/" .. file)
-    -- local html = markdown_to_html(markdown)
-    -- write_file("public/" .. file:gsub("%.md$", ".html"), html)
-  end
-end
-
 sw.start()
 
 local data = {
   page_title = "Welcome to my blog!",
-  content = "Hi, mom!",
+  markdown_file = nil,
 }
 utils.merge_tables(data, config)
 
-local html_content = render_template("./templates/base.html", data)
-utils.write_file("public/index.html", html_content)
+for _, file in ipairs(files) do
+  local full_path = path .. "/" .. file
+  data.post = {}
+  data.post.markdown_file = full_path
+  local html_content = render_template("./templates/post.html", data)
+  local tmp = file:gsub("%.md$", "")
+  local dst = "public/" .. tmp .. ".html"
+  print("Writing " .. dst)
+  utils.write_file(dst, html_content)
+end
 
 local dt = sw.elapsed_milliseconds()
 print("🚀 Built the blog in " .. dt .. " ms - ready to deploy!")

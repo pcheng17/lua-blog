@@ -1,15 +1,25 @@
 local M = {}
 
 function M.write_file(path, content)
+  -- Extract the directory path from the provided file path
+  local dir = path:match("(.+)/")
+  if dir then
+    local mkdirCommand = string.format("mkdir -p %s", dir)
+    os.execute(mkdirCommand)
+  end
+
   local file = io.open(path, "w")
-  if not file then return false end
+  if not file then
+    print("Error: Could not open file " .. path)
+    return false
+  end
   file:write(content)
   file:close()
   return true
 end
 
 function M.read_file(path)
-  local file = io.open(path, "rb")
+  local file = io.open(path, "r")
   if not file then return nil end
   local content = file:read("*all")
   file:close()
