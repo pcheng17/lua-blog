@@ -26,6 +26,35 @@ function M.read_file(path)
   return content
 end
 
+function M.print_content_structure(tbl)
+  local function helper(t, indent)
+    indent = indent or ""
+    local keys = {}
+    for k in pairs(t) do
+      keys[#keys + 1] = k
+    end
+    table.sort(keys) -- Sort keys to maintain order
+
+    for i, k in ipairs(keys) do
+      local v = t[k]
+      if i == #keys then
+        print(indent .. "└─ " .. k)
+      else
+        print(indent .. "├─ " .. k)
+      end
+      if type(v) == "table" then
+        local prefix = indent .. (i == #keys and "   " or "│  ")
+        helper(v, prefix)
+      end
+    end
+  end
+
+  for k in pairs(tbl) do
+    print(k)
+    helper(tbl[k])
+  end
+end
+
 function M.merge_arrays(t1, t2)
   for i = 1, #t2 do
     t1[#t1 + 1] = t2[i]

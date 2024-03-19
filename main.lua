@@ -29,64 +29,34 @@ local function render_template(template_path, data)
 end
 
 
+
+
+
+sw.start()
+
 local path = "content/" -- Specify the directory path
 local files = pc.get_markdown_files(path)
 
+utils.print_content_structure(files)
 
-local function print_tree(tbl)
-  local function print_tree_recurse(t, indent)
-    indent = indent or ""
-    local keys = {}
-    for k in pairs(t) do
-      keys[#keys + 1] = k
-    end
-    table.sort(keys) -- Sort keys to maintain order
+local data = {
+  page_title = "Welcome to my blog!",
+  markdown_file = nil,
+}
+utils.merge_tables(data, config)
 
-    for i, k in ipairs(keys) do
-      local v = t[k]
-      if i == #keys then
-        print(indent .. "└─ " .. k)
-      else
-        print(indent .. "├─ " .. k)
-      end
-      if type(v) == "table" then
-        local prefix = indent .. (i == #keys and "   " or "│  ")
-        print_tree_recurse(v, prefix)
-      end
-    end
-  end
-
-  for k in pairs(tbl) do
-    print(k)
-    print_tree_recurse(tbl[k])
-  end
+for _, file in ipairs(files) do
+  local full_path = path .. "/" .. file
+  data.post = {}
+  data.post.markdown_file = full_path
+  local html_content = render_template("./templates/post.html", data)
+  local tmp = file:gsub("%.md$", "")
+  local dst = "public/" .. tmp .. ".html"
+  print("Writing " .. dst)
+  utils.write_file(dst, html_content)
 end
 
-print_tree(files)
-
-
-
-
--- sw.start()
---
--- local data = {
---   page_title = "Welcome to my blog!",
---   markdown_file = nil,
--- }
--- utils.merge_tables(data, config)
---
--- for _, file in ipairs(files) do
---   local full_path = path .. "/" .. file
---   data.post = {}
---   data.post.markdown_file = full_path
---   local html_content = render_template("./templates/post.html", data)
---   local tmp = file:gsub("%.md$", "")
---   local dst = "public/" .. tmp .. ".html"
---   print("Writing " .. dst)
---   utils.write_file(dst, html_content)
--- end
---
--- local dt = sw.elapsed_milliseconds()
--- print("🚀 Built the blog in " .. dt .. " ms - ready to deploy!")
+local dt = sw.elapsed_milliseconds()
+print("🚀 Built the blog in " .. dt .. " ms - ready to deploy!")
 
 
