@@ -28,6 +28,38 @@ local function render_template(template_path, data)
   return content
 end
 
+local function build(tbl)
+  local function helper(t, parent, indent)
+    indent = indent or ""
+    local keys = {}
+    for k in pairs(t) do
+      keys[#keys + 1] = k
+    end
+    table.sort(keys) -- Sort keys to maintain order
+
+    for i, k in ipairs(keys) do
+      local v = t[k]
+      if i == #keys then
+        print(indent .. "└─ " .. k)
+        -- Build single page for `parent .. k`
+      else
+        print(indent .. "├─ " .. k)
+        -- Build single page for `parent .. k`
+      end
+      if type(v) == "table" then
+        local prefix = indent .. (i == #keys and "   " or "│  ")
+        helper(v, parent .. k, prefix)
+        -- Build listing page for `parent .. k`
+      end
+    end
+  end
+
+  for k in pairs(tbl) do
+    print("/")
+    helper(tbl[k], "/", nil)
+  end
+end
+
 
 
 
@@ -37,7 +69,7 @@ sw.start()
 local path = "content/" -- Specify the directory path
 local files = pc.get_markdown_files(path)
 
-utils.print_content_structure(files)
+-- utils.print_content_structure(files)
 
 local data = {
   page_title = "Welcome to my blog!",
@@ -45,16 +77,18 @@ local data = {
 }
 utils.merge_tables(data, config)
 
-for _, file in ipairs(files) do
-  local full_path = path .. "/" .. file
-  data.post = {}
-  data.post.markdown_file = full_path
-  local html_content = render_template("./templates/post.html", data)
-  local tmp = file:gsub("%.md$", "")
-  local dst = "public/" .. tmp .. ".html"
-  print("Writing " .. dst)
-  utils.write_file(dst, html_content)
-end
+build(files)
+
+-- for _, file in ipairs(files) do
+--   local full_path = path .. "/" .. file
+--   data.post = {}
+--   data.post.markdown_file = full_path
+--   local html_content = render_template("./templates/post.html", data)
+--   local tmp = file:gsub("%.md$", "")
+--   local dst = "public/" .. tmp .. ".html"
+--   print("Writing " .. dst)
+--   utils.write_file(dst, html_content)
+-- end
 
 local dt = sw.elapsed_milliseconds()
 print("🚀 Built the blog in " .. dt .. " ms - ready to deploy!")

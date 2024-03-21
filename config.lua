@@ -1,4 +1,5 @@
 local M = {
+  site_url = "petercheng.me",
   css = "styles.css",
   navigation_bar = {
     links = {
